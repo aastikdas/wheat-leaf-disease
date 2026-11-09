@@ -35,6 +35,40 @@ st.markdown("""
         font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', 'Material Icons' !important;
     }
 
+    /* 3. Dark, crisp text on all labels & inputs (Overrides browser dark-mode fading) */
+    label,
+    label[data-testid="stWidgetLabel"],
+    label[data-testid="stWidgetLabel"] p,
+    div[data-testid="stRadio"] label,
+    div[data-testid="stRadio"] label p,
+    div[data-testid="stRadio"] label span,
+    div[data-testid="stSelectbox"] label,
+    div[data-testid="stSelectbox"] label p,
+    div[data-testid="stFileUploader"] label,
+    div[data-testid="stFileUploader"] label p,
+    div[data-testid="stMarkdownContainer"] p,
+    div[data-testid="stMarkdownContainer"] span {
+        color: #1A202C !important;
+        font-weight: 500;
+    }
+
+    /* Dropdown container styling */
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #1A202C !important;
+        border: 1px solid #D4C5A0 !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="select"] * {
+        color: #1A202C !important;
+    }
+    ul[data-baseweb="menu"] {
+        background-color: #FFFFFF !important;
+    }
+    ul[data-baseweb="menu"] li {
+        color: #1A202C !important;
+    }
+
     /* 3. Fixed Sticky Top Navbar */
     header[data-testid="stHeader"] {
         background: transparent !important;
