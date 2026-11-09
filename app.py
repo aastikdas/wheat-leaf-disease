@@ -12,7 +12,6 @@ import streamlit as st
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Wheat Leaf Disease Diagnostic & Fertilizer Advisory",
-    page_icon="🌾",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -192,7 +191,7 @@ st.markdown("""
 <!-- Fixed Navbar -->
 <div class="fixed-navbar">
     <div class="navbar-title">
-        🌾 WheatGuard <span class="accent">|</span> Wheat Leaf Disease Diagnostic & Fertilizer Advisory
+        WheatGuard <span class="accent">|</span> Wheat Leaf Disease Diagnostic & Fertilizer Advisory
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -359,21 +358,21 @@ def get_recommendations(pred_class):
         }
 
 # -----------------------------------------------------------------------------
-# System Overview Card (Gives context so the page never looks empty)
+# Overview Card
 # -----------------------------------------------------------------------------
 st.markdown("""
 <div class="app-card">
-    <div class="card-title">🌾 Crop Health Diagnostic Portal</div>
+    <div class="card-title">Crop Health Diagnostic Portal</div>
     <div style="font-size: 1.02rem; color: #4A5568; line-height: 1.6; margin-bottom: 14px;">
         Automated wheat leaf disease identification system powered by EfficientNet-B0 deep transfer learning.
         Upload a field photo or choose from verified test samples to diagnose leaf condition and receive targeted fertilizer recommendations.
     </div>
     <div>
-        <span class="pill-badge">🌿 Crown Root Rot</span>
-        <span class="pill-badge">🍃 Leaf Rust</span>
-        <span class="pill-badge">🌾 Loose Smut</span>
-        <span class="pill-badge">✅ Healthy / Normal</span>
-        <span class="pill-badge" style="background-color: #E2E8F0; color: #2D3748; border-color: #CBD5E0;">🎯 Model: EfficientNet-B0 (96.8% Acc)</span>
+        <span class="pill-badge">Crown Root Rot</span>
+        <span class="pill-badge">Leaf Rust</span>
+        <span class="pill-badge">Loose Smut</span>
+        <span class="pill-badge">Healthy / Normal</span>
+        <span class="pill-badge" style="background-color: #E2E8F0; color: #2D3748; border-color: #CBD5E0;">Model: EfficientNet-B0 (96.8% Acc)</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
