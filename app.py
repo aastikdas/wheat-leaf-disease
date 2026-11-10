@@ -277,12 +277,13 @@ class GradCAM:
             h.remove()
 
 # -----------------------------------------------------------------------------
-# Rule-Based Fertilizer Advisory (Concise, 3 items each with dosage)
+# Rule-Based Fertilizer Advisory & Causes (Concise, 3 items each with dosage)
 # -----------------------------------------------------------------------------
 def get_recommendations(pred_class):
     if pred_class == "Healthy":
         return {
             "display_name": "Healthy Wheat Leaf",
+            "cause": "Optimal plant health maintained by balanced soil nutrients, adequate irrigation, and absence of virulent fungal pathogen spores.",
             "note": "Crop is in good condition now, but maintain proper care to keep it healthy.",
             "fertilizers": [
                 {
@@ -302,6 +303,7 @@ def get_recommendations(pred_class):
     elif pred_class == "Leaf Rust":
         return {
             "display_name": "Leaf Rust",
+            "cause": "Infection by airborne fungal spores of Puccinia triticina, accelerated by mild temperatures (15°C–25°C) and prolonged surface leaf moisture.",
             "note": None,
             "fertilizers": [
                 {
@@ -321,6 +323,7 @@ def get_recommendations(pred_class):
     elif pred_class == "Loose Smut":
         return {
             "display_name": "Loose Smut",
+            "cause": "Seed-borne infection by Ustilago tritici spores that penetrate flowering florets and stay dormant inside embryo tissue until germination.",
             "note": None,
             "fertilizers": [
                 {
@@ -340,6 +343,7 @@ def get_recommendations(pred_class):
     else: # Crown Root Rot
         return {
             "display_name": "Crown Root Rot",
+            "cause": "Soil-borne fungal attack by Fusarium species, worsened by dry soil moisture stress, continuous wheat cropping, and poor root aeration.",
             "note": None,
             "fertilizers": [
                 {
@@ -396,7 +400,7 @@ st.markdown('<h3 style="color: #1C3B1A; margin-top: 10px; margin-bottom: 15px;">
 
 input_method = st.radio(
     "Choose input source:",
-    ["Pick from Sample Images", "Upload My Own Leaf Image(s)"],
+    ["Pick from Sample Images", "Upload My Own Leaf Image(s)", "Take Photo with Camera"],
     horizontal=True
 )
 
@@ -428,7 +432,7 @@ if input_method == "Pick from Sample Images":
             })
     else:
         st.warning(f"No sample images found in `{SAMPLES_DIR}` directory.")
-else:
+elif input_method == "Upload My Own Leaf Image(s)":
     uploaded_files = st.file_uploader(
         "Upload wheat leaf photo(s) (JPG or PNG) — you can select multiple files:",
         type=["jpg", "jpeg", "png"],
@@ -443,6 +447,19 @@ else:
                 })
             except Exception as e:
                 st.error(f"Error loading {uf.name}: {e}")
+else: # "Take Photo with Camera"
+    st.info("Your browser will request permission to access your camera. On mobile phones, this opens your camera to take a photo of the wheat leaf.")
+    camera_photo = st.camera_input("Take a photo of the wheat leaf:")
+    if camera_photo is not None:
+        try:
+            photo_bytes = camera_photo.getvalue()
+            photo_hash = abs(hash(photo_bytes)) % 1000000
+            selected_images.append({
+                "image": Image.open(camera_photo).convert('RGB'),
+                "label": f"Camera_Photo_{photo_hash}.jpg"
+            })
+        except Exception as e:
+            st.error(f"Error processing camera photo: {e}")
 
 # Reset prediction if image selection changed
 active_key = ",".join([item["label"] for item in selected_images]) if selected_images else None
@@ -518,6 +535,7 @@ if selected_images and st.session_state.run_prediction:
             # Single clean lines
             st.markdown(f'<div class="report-line"><b>Disease Name:</b> <span class="report-disease">{rec_data["display_name"]}</span></div>', unsafe_allow_html=True)
             st.markdown(f'<div class="report-line"><b>Prediction Confidence:</b> {confidence:.2f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="report-line" style="margin-top: 10px; line-height: 1.55;"><b>Primary Cause:</b> {rec_data["cause"]}</div>', unsafe_allow_html=True)
             
             if rec_data.get("note"):
                 st.markdown(f'<div class="report-note">{rec_data["note"]}</div>', unsafe_allow_html=True)

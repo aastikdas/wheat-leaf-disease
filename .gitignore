@@ -28,3 +28,4 @@ Thumbs.db
 # Explicitly ensure the model checkpoint is ALWAYS tracked
 !best_wheat_disease_model.pth
 !*.pth
+
