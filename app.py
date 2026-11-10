@@ -282,21 +282,13 @@ class GradCAM:
 def get_recommendations(pred_class):
     if pred_class == "Healthy":
         return {
-            "display_name": "Healthy Wheat Leaf",
-            "cause": "Optimal plant health maintained by balanced soil nutrients, adequate irrigation, and absence of virulent fungal pathogen spores.",
-            "note": "Crop is in good condition now, but maintain proper care to keep it healthy.",
+            "display_name": "No Disease Found",
+            "cause": "Optimal plant health maintained by balanced soil nutrition and irrigation.",
+            "note": None,
             "fertilizers": [
                 {
                     "name": "Urea (Nitrogen 46% N)",
-                    "dosage": "100–120 kg/ha split across basal, CRI, and tillering stages"
-                },
-                {
-                    "name": "Single Super Phosphate - SSP (16% P₂O₅)",
-                    "dosage": "250–300 kg/ha applied as basal dose before sowing"
-                },
-                {
-                    "name": "Muriate of Potash - MOP (60% K₂O)",
-                    "dosage": "40–50 kg/ha for stalk strength and lodging resistance"
+                    "dosage": "Small maintenance dose (25–30 kg/ha) recommended to sustain healthy vegetative growth."
                 }
             ]
         }
@@ -532,24 +524,31 @@ if selected_images and st.session_state.run_prediction:
                     st.caption(f"Heatmap preview unavailable: {e}")
 
         with col_info:
-            # Single clean lines
-            st.markdown(f'<div class="report-line"><b>Disease Name:</b> <span class="report-disease">{rec_data["display_name"]}</span></div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="report-line"><b>Prediction Confidence:</b> {confidence:.2f}%</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="report-line" style="margin-top: 10px; line-height: 1.55;"><b>Primary Cause:</b> {rec_data["cause"]}</div>', unsafe_allow_html=True)
-            
-            if rec_data.get("note"):
-                st.markdown(f'<div class="report-note">{rec_data["note"]}</div>', unsafe_allow_html=True)
-
-            st.markdown('<div class="fert-header">Recommended Fertilizers & Dosage:</div>', unsafe_allow_html=True)
-            st.markdown('<ol style="margin-top: 6px; padding-left: 20px;">', unsafe_allow_html=True)
-            for fert in rec_data["fertilizers"]:
-                st.markdown(f'''
-                <li style="margin-bottom: 12px;">
-                    <div style="font-size: 1.1rem; font-weight: 600; color: #2D3748;">{fert["name"]}</div>
-                    <div style="font-size: 0.96rem; color: #4A5568; margin-top: 2px;"><b>Dosage:</b> {fert["dosage"]}</div>
-                </li>
-                ''', unsafe_allow_html=True)
-            st.markdown('</ol>', unsafe_allow_html=True)
+            if confidence < 90.0:
+                st.markdown('<div class="report-line"><b>Status:</b> <span style="color: #C53030; font-weight: 700;">Uncertain / Unable to Classify</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="report-line"><b>Prediction Confidence:</b> {confidence:.2f}%</div>', unsafe_allow_html=True)
+                st.markdown("""
+                <div style="background-color: #FFF5F5; border: 1px solid #FEB2B2; border-radius: 8px; padding: 14px 18px; margin-top: 14px; color: #9B2C2C; font-size: 1.02rem; line-height: 1.55;">
+                    The system is unsure and unable to reliably classify this leaf (confidence is below 90%). Please provide a clearer image with better lighting, sharp focus, or a different leaf angle.
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                # Single clean lines
+                st.markdown(f'<div class="report-line"><b>Disease Name:</b> <span class="report-disease">{rec_data["display_name"]}</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="report-line"><b>Prediction Confidence:</b> {confidence:.2f}%</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="report-line" style="margin-top: 10px; line-height: 1.55;"><b>Primary Cause:</b> {rec_data["cause"]}</div>', unsafe_allow_html=True)
+                
+                fert_header_title = "Recommended Fertilizer & Maintenance:" if pred_class == "Healthy" else "Recommended Fertilizers & Dosage:"
+                st.markdown(f'<div class="fert-header">{fert_header_title}</div>', unsafe_allow_html=True)
+                st.markdown('<ol style="margin-top: 6px; padding-left: 20px;">', unsafe_allow_html=True)
+                for fert in rec_data["fertilizers"]:
+                    st.markdown(f'''
+                    <li style="margin-bottom: 12px;">
+                        <div style="font-size: 1.1rem; font-weight: 600; color: #2D3748;">{fert["name"]}</div>
+                        <div style="font-size: 0.96rem; color: #4A5568; margin-top: 2px;"><b>Dosage:</b> {fert["dosage"]}</div>
+                    </li>
+                    ''', unsafe_allow_html=True)
+                st.markdown('</ol>', unsafe_allow_html=True)
 
         # Divider between multiple results
         if idx < len(selected_images):
